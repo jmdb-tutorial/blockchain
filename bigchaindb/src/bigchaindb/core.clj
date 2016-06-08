@@ -12,9 +12,11 @@
         status-code (:status response)]
     (str protocol-name "/" major "." minor " " status-code " " reason-phrase)) )
 
+(def transaction-version 1) ;;"Currently this seems to be hardcoded - see https://github.com/bigchaindb/bigchaindb/blob/master/bigchaindb/util.py:298)"
+
 (defn build-tx [operation payload]
   {:id "<hash of transaction, excluding signatures>"
-   :version "<version number of transaction model>"
+   :version transaction-version
    :transaction {:fullfilments []
                  :conditions []
                  :operation (name operation)

@@ -14,7 +14,7 @@
 (facts "Build a CREATE transaction"
        (let [tx (build-tx :CREATE {:foo "bar" :oof "rab"})]
          (fact "transaction should be valid"
-               (println (clojure.pprint/pprint  tx)))))
+               (println (json/generate-string  tx {:pretty true})))))
 
 ;; (facts "Posting a CREATE transaction"
 ;;        (let [response (submit-tx server {:foo "bar"})]
