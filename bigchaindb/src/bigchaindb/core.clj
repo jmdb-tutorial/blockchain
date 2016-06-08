@@ -12,6 +12,16 @@
         status-code (:status response)]
     (str protocol-name "/" major "." minor " " status-code " " reason-phrase)) )
 
+(defn build-tx [operation payload]
+  {:id "<hash of transaction, excluding signatures>"
+   :version "<version number of transaction model>"
+   :transaction {:fullfilments []
+                 :conditions []
+                 :operation (name operation)
+                 :timestamp "<timestamp from client>"
+                 :data {:hash "<hash of payload>"
+                        :payload payload}}})
+
 (defn submit-tx [server tx]
   (let [request-url (str (:api-base-path server) "transactions/")
         json-body (json/generate-string tx)
