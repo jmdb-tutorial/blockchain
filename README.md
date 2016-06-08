@@ -113,5 +113,4 @@ https://www.hyperledger.org/
 https://github.com/bigchaindb/bigchaindb-examples
 http://bigchaindb.readthedocs.io/en/latest/models.html#the-transaction-model
 
-## Use cases
 
