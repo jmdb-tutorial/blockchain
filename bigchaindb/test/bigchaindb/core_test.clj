@@ -7,11 +7,11 @@
 
 (facts "Building a JSON string"
        (fact "simple string"
-             (json/generate-string {:foo 20}) => "{\"foo\":20}"))
+             (json/generate-string {:bar 20}) => "{\"foo\":20}"))
 
 (facts "Posting a CREATE transaction"
-       (let [response (submit-tx server {})]
-         (fact "the response should be valid"
-               (println response)
+       (let [response (submit-tx server {:foo "bar"})]
+         (fact "the response should be valid"               
                (:status response) => 200)))
+
 

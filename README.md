@@ -47,7 +47,7 @@ Inside are some examples using various blockchain technologies.
 
 - Proof of work (bitcoin vs ethereum)
 - Segregated witness
-- Proof of stake (Caspar from ethereum)
+- Proof of stake (Caspar from ethereum, gnuclear from tendermint)
 - Double spending
 - Sybil attack
 
@@ -99,6 +99,7 @@ git@github.com:ethereum/web3.js.git
 ## Tendermint
 
 http://tendermint.com/
+https://github.com/gnuclear/gnuclear-whitepaper
 
 ## Eris
 
