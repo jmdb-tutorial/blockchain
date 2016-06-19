@@ -32,7 +32,7 @@
                               :content-type :json
                               :accept :json
                               :body json-body
-                              :socket-timeout 1000 
+                              :socket-timeout 5000 
                               :conn-timeout 1000} )]
     (println "POST" request-url "HTTP/1.1")
     (println json-body)

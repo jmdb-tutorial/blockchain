@@ -16,9 +16,9 @@
          (fact "transaction should be valid"
                (println (json/generate-string  tx {:pretty true})))))
 
-;; (facts "Posting a CREATE transaction"
-;;        (let [response (submit-tx server {:foo "bar"})]
-;;          (fact "the response should be valid"               
-;;                (:status response) => 200)))
+(facts "Posting a CREATE transaction"
+       (let [response (submit-tx server (build-tx :CREATE {:foo "bar" :oof "rab"}))]
+         (fact "the response should be valid"               
+               (:status response) => 200)))
 
 
