@@ -106,6 +106,8 @@ https://github.com/gnuclear/gnuclear-whitepaper
 
 https://erisindustries.com/
 
+Relating to bigchain 
+
 ## Hyperledger
 
 https://www.hyperledger.org/

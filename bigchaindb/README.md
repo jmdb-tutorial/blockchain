@@ -3,7 +3,7 @@
 
 ## bigchaindb setup and testing
 
-BigChainDB provides a docker image which you can run on osx using docker-machine.
+BigChainDB provides a docker image which you can run on osx using docker-machine. There is some documents here https://media.readthedocs.org/pdf/bigchaindb/latest/bigchaindb.pdf
 
 You can follow the instructions at https://bigchaindb.readthedocs.io/en/latest/nodes/run-with-docker.html
 
@@ -60,14 +60,68 @@ Type "help", "copyright", "credits" or "license" for more information.
 >>> 
 ```
 
+The server can be accessed from:
+
+	http://<docker-machine-ip>:58080/
+	http://<docker-machine-ip>:59984/api/v1/transactions/<transaction_id>
+
+You can discover your docker-machine ip address like this:
+
+	docker-machine ip default
+
+Try putting the transaction ID from your test transaction in there.
+
+You can also see what the bigchain server is doing by running
+
+	docker logs --follow bigchaindb
+
+this is particularly useful to see errors
+
+
+## Python client outside Docker
+
+Lets try connecting to the docker image remotely. The endpoint is stored in a dict called `bigchain` here `bigchain['api_endpoint']`
+
+We need to setup a clean bigchain environment so we can use the docker image that we already have or a new one
+
+	docker run -t -i ubuntu /bin/bash
+
+
+
+import bigchaindb
+bigchaindb.config['api_endpoint']
+
+from bigchaindb import crypto
+from bigchaindb.client import Client
+
+private_key, public_key = crypto.generate_key_pair()
+c1 = Client(private_key=private_key, public_key=public_key, api_endpoint='http://192.168.99.100:59984/api/v1')
+
+tx1 = c1.create()
+
 ## BigchainDB Examples
+
+These can be worked through from here
 
 https://media.readthedocs.org/pdf/bigchaindb-examples/latest/bigchaindb-examples.pdf
 
+## Server API
+
+https://bigchaindb.readthedocs.io/en/latest/nodes/python-server-api-examples.html
+
+This gives us some detailed use case
 
 # Clojure client project
 
 The project uses [Midje](https://github.com/marick/Midje/).
+
+This is a demonstration of using the http interface to CREATE and TRANSFER assests.
+
+The api is described here http://bigchaindb.readthedocs.io/en/latest/drivers-clients/http-client-server-api.html
+
+And theres interactive docs here: http://docs.bigchaindb.apiary.io/#
+
+
 
 ## How to run the tests
 
