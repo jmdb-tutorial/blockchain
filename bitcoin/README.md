@@ -8,10 +8,11 @@
 
 	export BITCOIN_DATA_DIR=<your dir here>
 
-	export BITCOIN_RPC_USER=<username>
-	export BITCOIN_RPC_PASSWORD=<very secure password>
+	export BITCOIN_RPC_AUTH=<username>:<salt>$<hash>
 
 - You don't want anyone to be able to see your username and password, otherwise they can hack your bitcoind!
+
+- You can generate the rpc_auth string by running `./bitcoin-auth.py <username> <password>` it will randomly pick a salt.
 
 Then do `./run-bitcoind.sh`
 
