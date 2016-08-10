@@ -43,7 +43,20 @@ Which defines
 		SignatureTypeSecp256k1 = byte(0x02)
 	)
 
-So we can see that our above signature has 1 as the first parameter meaning its an Ed25519 signature. Which are elliptic curve signatures.
+So we can see that our above signature has 1 as the first parameter meaning its an Ed25519 signature. Which are elliptic curve signatures. Its implemented here https://github.com/tendermint/ed25519
+Seems to derive from http://bench.cr.yp.to/supercop.html -> http://bench.cr.yp.to/impl-sign/ed25519.html the ref10 version. not sure where the source for this is.
+
+
+See here for a list of other implementations:
+
+http://stackoverflow.com/questions/19147619/what-implementions-of-ed25519-exist
+
+Theres a Java Port: https://github.com/str4d/ed25519-java
+
+And a C Version https://github.com/orlp/ed25519
+
+
+
 
 Basically its using tendermint underneath
 
@@ -74,7 +87,20 @@ https://github.com/eris-ltd/eris-db/blob/develop/account/priv_account.go
 
 	func (pA *PrivAccount) Sign(chainID string, o Signable) crypto.Signature {
 		return pA.PrivKey.Sign(SignBytes(chainID, o))
+		}
+
+The Private key sign function is here https://github.com/tendermint/go-crypto/blob/master/priv_key.go
+
+	func (privKey PrivKeyEd25519) Sign(msg []byte) Signature {
+		privKeyBytes := [64]byte(privKey)
+		signatureBytes := ed25519.Sign(&privKeyBytes, msg)
+		return SignatureEd25519(*signatureBytes)
 	}
+
+Which delegates to the ed25519 function @ https://github.com/tendermint/ed25519/blob/master/ed25519.go Which just has `sign` and `verify` in it. 
+
+
+
 
 https://github.com/eris-ltd/eris-db/blob/develop/txs/tx.go
 
