@@ -1,11 +1,10 @@
 /// @title A multisignatory loan contract
 // TODO: implement a cancel method that could also have some rules
 contract LoanContract {
-  enum State { Created, BorrowerSigned, Active, Cancelled };
+  enum State { Created, BorrowerSigned, Active, Cancelled }
   
-  bytes64 hashOfContract; // The SHA256 hash of the terms of the contract
-  State status;
-
+  string hashOfContract; // The SHA256 hash of the terms of the contract
+  
   // The participants
   
   address executor; // The "controlling" entity for the contract
@@ -22,7 +21,10 @@ contract LoanContract {
   SignatureTracking signatures;
 
   
-  function LoanContract(bytes64 _hashOfContract, address[] _borrowers, address _lender, address _counterFraud) {
+  function LoanContract(string _hashOfContract,
+		address[] _borrowers,
+		address _lender,
+		address _counterFraud) {
     executor = msg.sender;
     
     hashOfContract = _hashOfContract;
@@ -34,41 +36,58 @@ contract LoanContract {
   modifier onlyBorrower() {
     uint borrowerMatch = 0;
     for (uint i = 0; i < borrowers.length; i++) {
-      if (borrowers[i] = msg.sender) {
+      if (borrowers[i] == msg.sender) {
         borrowerMatch++;
       }
     }
-    if (borrowerMatch > 1) {
-      throw;
-    }
-    return (borrowerMatch == 1);
+    if (borrowerMatch > 1) throw;
+    if (borrowerMatch ==0) throw;
+    _
+  }
+
+  modifier onlyLender() {
+    if (msg.sender != lender) throw;
+    _
+  }
+
+  modifier onlyCounterFraud() {
+    if (msg.sender != counterFraud) throw;
+    _
+  }
+
+  modifier inState(State _state) {
+    if (_state != status()) throw;
+    _
   }
 
   // The hash gets passed in by each party so we can check it matches the one that we created.
-  function sign_borrower(byte64 _hashOfContract)
+  function sign_borrower(string _hashOfContract)
     onlyBorrower()
+    inState(State.Created)
   {
     signatures.borrowerCount ++;
   }
 
-  function sign_lender(byte64 _hashOfContract)
+  function sign_lender(string _hashOfContract)
     onlyLender()
+    inState(State.BorrowerSigned)
   {
-    signatures.lenderSigned = true;
+    signatures.lender = true;
   }
 
-  function sign_counter_fraud(byte64 _hashOfContract)
+  function sign_counter_fraud(string _hashOfContract)
     onlyCounterFraud()
+    inState(State.BorrowerSigned)
   {
-    signatures.counterFraudSigned = true;
+    signatures.counterFraud = true;
   }
 
   // TODO: Work out what to do about cancelling
-  function status() returns (State state) {
-    State status = Created;
-    if (signature.borrowerCount = borrowers.length) {
+  function status() returns (State status) {
+    status = State.Created;
+    if (signatures.borrowerCount == borrowers.length) {
       if (signatures.lender && signatures.counterFraud) {
-        status = Active;
+        status = State.Active;
       }
     }
     return status;
