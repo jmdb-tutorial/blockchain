@@ -1,7 +1,7 @@
 /// @title A multisignatory loan contract
 // TODO: implement a cancel method that could also have some rules
 contract LoanContract {
-  enum State { Created, BorrowerSigned, Active, Cancelled }
+  enum State { Created, BorrowerSigned, ReadyToPay, Active, Cancelled }
   
   string hashOfContract; // The SHA256 hash of the terms of the contract
   
@@ -33,6 +33,9 @@ contract LoanContract {
     counterFraud = _counterFraud;
   }
 
+  // Our loan system would listen for this so that it could make the loan payment
+  event ReadyToPay(address loanContract);
+
   modifier onlyBorrower() {
     uint borrowerMatch = 0;
     for (uint i = 0; i < borrowers.length; i++) {
@@ -61,34 +64,39 @@ contract LoanContract {
   }
 
   // The hash gets passed in by each party so we can check it matches the one that we created.
-  function sign_borrower(string _hashOfContract)
+  function sign(string _hashOfContract)
     onlyBorrower()
     inState(State.Created)
   {
     signatures.borrowerCount ++;
   }
 
-  function sign_lender(string _hashOfContract)
+  function paid(string _hashOfContract)
     onlyLender()
-    inState(State.BorrowerSigned)
+    inState(State.ReadyToPay)
   {
     signatures.lender = true;
   }
 
-  function sign_counter_fraud(string _hashOfContract)
+  function approve(string _hashOfContract)
     onlyCounterFraud()
     inState(State.BorrowerSigned)
   {
     signatures.counterFraud = true;
+    ReadyToPay(this);
   }
 
   // TODO: Work out what to do about cancelling
   function status() returns (State status) {
     status = State.Created;
     if (signatures.borrowerCount == borrowers.length) {
-      if (signatures.lender && signatures.counterFraud) {
-        status = State.Active;
-      }
+      if (signatures.counterFraud) {
+        if (signatures.lender) {
+          status = State.Active;
+        } else {
+          status = State.ReadyToPay;
+        }
+      }     
     }
     return status;
   }

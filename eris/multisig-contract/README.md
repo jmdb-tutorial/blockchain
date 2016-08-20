@@ -74,7 +74,7 @@ Ok, now we have a chain running its time to get that contract setup. Might aswel
 
 The file we want is called `loan.sol` in this directory. You can see if it is valid solitidy, [here](https://ethereum.github.io/browser-solidity/#version=0.3.6).
 
-
+Now that we have a valid contract, we need to deploy it
 
 
 # References
