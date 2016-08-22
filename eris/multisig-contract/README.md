@@ -74,9 +74,13 @@ Ok, now we have a chain running its time to get that contract setup. Might aswel
 
 The file we want is called `loan.sol` in this directory. You can see if it is valid solitidy, [here](https://ethereum.github.io/browser-solidity/#version=0.3.6).
 
-Now that we have a valid contract, we need to deploy it
+Now that we have a valid contract, we need to deploy it.
 
+To do this we use the eris package manager, which takes an input yml file and does things for us. Its a bit like an ansible script.
 
+We already have am `emp.yml` file which simply has a job to deploy the contract and wait for it to be deployed.
+
+We first need to get the address of an account to use to deploy the contract. We are going to use 
 # References
 
 http://www.shakelaw.com/blog/when-does-a-contract-take-effect/
