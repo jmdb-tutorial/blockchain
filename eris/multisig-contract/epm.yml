@@ -1,7 +1,0 @@
-jobs:
-
-- name: deployLoanK
-  job:
-    deploy:
-      contract: loan.sol
-      wait: true

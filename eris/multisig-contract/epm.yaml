@@ -1,0 +1,19 @@
+jobs:
+
+- name: deployLoanK
+  job:
+    deploy:
+      contract: loan.sol
+      wait: true
+
+- name: queryStatus
+  job:
+    call:
+      destination: $deployLoanK
+      data: status
+
+- name: assertStorage
+  job:
+    assert:
+      key: $queryStatus
+      val: "Created"

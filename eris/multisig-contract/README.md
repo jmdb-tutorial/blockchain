@@ -78,9 +78,38 @@ Now that we have a valid contract, we need to deploy it.
 
 To do this we use the eris package manager, which takes an input yml file and does things for us. Its a bit like an ansible script.
 
-We already have am `emp.yml` file which simply has a job to deploy the contract and wait for it to be deployed.
+We already have am `epm.yaml` file which simply has a job to deploy the contract and wait for it to be deployed.
 
-We first need to get the address of an account to use to deploy the contract. We are going to use 
+We first need to get the address of an account to use to deploy the contract. We are going to use the "executor" address. This lives in an addresses.csv file in the multisig chain dir.
+
+	addr=$(cat $chain_dir/addresses.csv | grep multisig_full_000 | cut -d ',' -f 1)
+
+Lets check that our chain is running
+
+	eris chains ls 
+
+You should see a `*` next to the `multisig` chain.
+
+By default, eris will try to use its online contract compiler but it sometimes doesn't work so the best thing is to download the compilers image.
+
+	docker pull quay.io/eris/compilers
+	eris services start compilers
+
+Then can try this
+
+	eris pkgs do --chain multisig --address $addr --compiler <ip-of-docker-vm>:9091
+
+To get the ip do
+
+	docker-machine ip default
+
+It might be a good idea to tail the logs while you do this...
+
+	eirs chains logs -f multisig
+
+	eris pkgs do --chain multisig --address $addr
+
+
 # References
 
 http://www.shakelaw.com/blog/when-does-a-contract-take-effect/
