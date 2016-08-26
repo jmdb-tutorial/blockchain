@@ -19,34 +19,126 @@ In this example, the contract is "effective" once everyone has signed it. The in
 
 # Installation
 
-You will need to have eris up and running and have followed the first couple of tutorials so you have a chain called "simplechain" running and have created your first contract.
+First you need to install docker and docker-machine (https://docs.erisindustries.com/tutorials/tool-specific/docker_machine/)
 
-The first thing we are going to do is set up a new chain with the right number of accounts in it.
+https://docs.erisindustries.com/explainers/the-eris-stack/
 
-	eris chains make --account-types=Root:2,Full:5 multisig
+Then create a machine for eris:
 
-This is going to create a chain called `multisig` with 5 full access accounts.
+	docker-machine create eris --driver virtualbox
+
+	docker-machine env eris
+
+eval the docker machine env.
+
+Check it
+
+	docker-machine ls
+
+	NAME      ACTIVE   DRIVER       STATE     URL                         SWARM   DOCKER    ERRORS
+	default   -        virtualbox   Stopped                                       Unknown   
+	eris      *        virtualbox   Running   tcp://192.168.99.100:2376           v1.12.1   
+
+The * under ACTIVE means that you are connected to that one. Its very important to call your docker machine `eris` - in theory eris respects whatever the active docker box is but its just simpler to do this to prevent any wierdness.
+
+Now run `eris init`
+
+This will download all the eris images into your docker machine. This takes some time, theres about 1GB of them.
+
+Theres a core service called `kets which you need to have running to manage various crypto keys. 
+
+	eris services start keys
+
+We now need to generate a key:
+
+	eris keys gen
+
+	eris keys ls
+	No keys found on host
+	The keys in your container kind marmot        <KEY>
+
+So we can back up the key, we want to export it to our host.
+
+	eris keys export <KEY>
+
+If you want to clear out all the keys
+
+	eris services stop keys
+	eris services rm -x keys
+	eris services start keys
+
+
+The first thing we are going to do is set up a new chain with the right number of accounts in it. If you need to remove the chain first:
+
+	eris chains stop multisig
+	eris chains rm multisig --data --dir --file --force 
+
+
+It looks like the chains marmot has a different `eris/base` image configured. If you look in `docker images` you will see something like this:
+
+	REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+	quay.io/eris/data      latest              139360deb878        26 hours ago        205.4 MB
+	quay.io/eris/data      <none>              139360deb878        26 hours ago        205.4 MB
+	quay.io/eris/keys      latest              f9f886412dfb        3 weeks ago         374.8 MB
+	quay.io/eris/keys      <none>              f9f886412dfb        3 weeks ago         374.8 MB
+	quay.io/eris/erisdb    0.11.4              06365aeae441        10 weeks ago        607.2 MB
+	quay.io/eris/erisdb    <none>              06365aeae441        10 weeks ago        607.2 MB
+	quay.io/eris/ipfs      latest              a660d3b2494f        11 weeks ago        353.9 MB
+	quay.io/eris/ipfs      <none>              a660d3b2494f        11 weeks ago        353.9 MB
+	quay.io/eris/epm       0.11.4              7505721901fa        3 months ago        764.4 MB
+	quay.io/eris/epm       <none>              7505721901fa        3 months ago        764.4 MB
+	quay.io/eris/eris-cm   0.11.4              8f48858f312a        3 months ago        780 MB
+	quay.io/eris/eris-cm   <none>              8f48858f312a        3 months ago        780 MB
+	eris/base              latest              a82b6eb25f46        10 months ago       564.7 MB
+	eris/base              <none>              a82b6eb25f46        10 months ago       564.7 MB
+
+But when you run `chains` it looks for `quay.io/eris/base` which isn't there yet and needs downloading. Once its done its all good.
+
+https://docs.erisindustries.com/tutorials/advanced/chain-making/
+
+You are now going to create a chain with the appropriate accounts.
+
+	eris chains make --account-types=Root:1,Full:1,Participant:4 multisig
+
+https://github.com/eris-ltd/eris-contracts.js/issues/28
+
+This is going to create a chain called `multisig` with 5 full access accounts and 2 root accounts. Its basically setting up meta data for the chain, including the genesis.json file. It creates a subfolder for each account which has a `genesis.json` file in it which will be passed later to chains new to instantiate the chain.
+
+For some reason this doesn't seem to be being copied into the chain though.
 
 You can now run the script `source ./multisig-env.sh` in this folder which will set up some useful environment variables for you.
 
 There will be 5 accounts, called :
 
-	multisig_root_000, multisig_root_001, multisig_root_002, multisig_root_003, multisig_root_004
+	multisig_root_000, multisig_full_000, multisig_participant_000, multisig_participant_001, multisig_participant_002, multisig_participant_003
 
 We will map these to the accounts above like this:
 
-| multisig_root_000 | EXECUTOR      |
-| multisig_root_001 | LENDER        |
-| multisig_root_002 | BORROWER_A    |
-| multisig_root_003 | BORROWER_B    |
-| multisig_root_004 | COUNTER_FRAUD |
+| multisig_full_000 | EXECUTOR      |
+| multisig_participant_001 | LENDER        |
+| multisig_participant_002 | BORROWER_A    |
+| multisig_participant_003 | BORROWER_B    |
+| multisig_participant_004 | COUNTER_FRAUD |
 
-Next up we need to instantiate our chain. If you have your simplechain running, stop it first.
+Next up we need to instantiate our chain. If you have your simplechain running, stop it first. If you want to clean everything up do
+	eris chains rm multisig --data --dir --file --force 
 
-    eris chains stop simplechain
+If you just want to remove the chain and not the metadata
 
-	eris chains new --machine=default multisig
+	eris chains rm -x multisig
+then
 
+	eris chains new multisig --dir $chain_dir_this
+
+
+
+The $chain_dir_this is important - it is the node config directory that we have created. Because we only created one full account type we only have a single node which of course kind of defeats the object of blockchain but is very useful for testing.
+
+To check the genesis block:
+
+	eris chains cat multisig genesis
+
+You should see a lot of accounts in there with their public keys
 You can check its running by doing
 
 	eris chains ls
@@ -66,11 +158,42 @@ Also incidentally, eris is using tendermint underneath which has its consensus p
 https://golang.org/ref/spec#Numeric_types
 https://github.com/tendermint/tendermint/blob/master/rpc/core/blocks.go#L34
 
-Ok, now we have a chain running its time to get that contract setup. Might aswell stop the chain for now.
+Ok, now we have a chain running its time to get that contract setup.
 
+If you need to go away or shut your machine down or whatever, you can type:
 
 	eris chains stop multisig
 
+and
+
+	eris chains start multisig
+
+To get it up and running again.
+
+Before doing this, source the env script again which will set up some useful defaults.
+
+	source multisig-env.sh
+
+What we are really interested in is getting an address we can use to deploy our contracts. In this case it is the "Full" account that we created earlier. We can get these from the file `~/.eris/chains/multisig/addresses.csv` the env script also copies this file into the app dir for use later when we interact with the contract via javascript.
+
+If you do
+
+	cat ~/.eris/chains/multisig/addresses.csv
+
+You should see something like this:
+
+	479E013292C44248DA2D257C9052EB800D4D09E2,multisig_full_000
+	C8561C44A527AFF4DB24AC7F977D1A590E7951A3,multisig_participant_000
+	7959542D88FA0FE95A62B6701E0F276DC137D990,multisig_participant_001
+	478D68A4159C76AECBC38B0D901C014FDB12B676,multisig_participant_002
+	6EAD9DA629368A1847C40F451E8B5C1D31E0E569,multisig_participant_003
+	2D680589FC9895C0A482C2BB4A6D27585AE110DB,multisig_root_000
+
+In the env script, we just extract the address associated with multisig_full_000 and stick it in a variable called `$addr` (thanks to the marmots from the documentation for this.
+
+	echo $addr
+
+Sweet, the marmots are ready!
 
 The file we want is called `loan.sol` in this directory. You can see if it is valid solitidy, [here](https://ethereum.github.io/browser-solidity/#version=0.3.6).
 
@@ -84,6 +207,8 @@ We first need to get the address of an account to use to deploy the contract. We
 
 	addr=$(cat $chain_dir/addresses.csv | grep multisig_full_000 | cut -d ',' -f 1)
 
+This is already done if you sourced the multisig-env.sh
+
 Lets check that our chain is running
 
 	eris chains ls 
@@ -92,12 +217,43 @@ You should see a `*` next to the `multisig` chain.
 
 By default, eris will try to use its online contract compiler but it sometimes doesn't work so the best thing is to download the compilers image.
 
-	docker pull quay.io/eris/compilers
+See 'Working with a local compiler' at https://docs.erisindustries.com/tutorials/advanced/contracts-deploying/ (compiler_addr also in multsig_env, you will need to source it again after its started) You also need to change the compilers services config to use the right image, like `compilers:0.11.4` instead of `compilers`
+
 	eris services start compilers
 
-Then can try this
+	source multisig_env.sh
 
-	eris pkgs do --chain multisig --address $addr --compiler <ip-of-docker-vm>:9091
+	compiler_addr=$(eris services inspect compilers NetworkSettings.IPAddress)
+
+Then can try this (`${docker_ip}` should be coming from the multisig env
+
+	eris pkgs do --chain multisig --address $addr --compiler ${compiler_addr}:9099
+
+You should see something like this:
+
+	Executing Job                                 defaultAddr
+	Executing Job                                 deployLoanK
+	Deploying Contract                       name=LoanContract
+    addr=DBF32C19F887D998786C7A931139444290E69588
+	Executing Job                                 queryStatus
+	Return Value                                  0
+	Executing Job                                 assertStorage
+	Assertion Succeeded                           0 == 0
+
+If there are no errors and you can see "Assertion Succeeded", your chain should be deployed!
+
+This is basically deploying the contract and making a call to it. The call is like a getter to get the "Status" which should be "Created" this is an enum in the `loan.sol` and gets converted to an integer. `0` is the first element in the enum.
+
+We are now going to interact with the contract. We can do this using a javascript api that the marmots kindly provide. To run it we can use node.js so if you don't already have it installed you want to do that now. Its important that you have the right version of node which is `v5` Later versions introduce some deprecation warnings which can be removed but are quite noisy.
+
+We are going to run a node app which is in the multisig dir called `cli-app.js`. To make it run as a node app we need to provide a `package.json` file.
+
+https://docs.erisindustries.com/tutorials/contracts-interacting/
+
+The first thing we do is `npm install` which sets up our node environment for us. It has basically the dependency to the eris client libraries and a library called `prompt` which is used to interact with the command line.
+
+Massively important is to update the ip address of the docker machine in the script!
+
 
 To get the ip do
 

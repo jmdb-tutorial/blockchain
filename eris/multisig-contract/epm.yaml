@@ -8,12 +8,14 @@ jobs:
 
 - name: queryStatus
   job:
-    call:
+    query-contract:
       destination: $deployLoanK
-      data: status
+      data: getStatus
+    
 
-- name: assertStorage
+- name: assertStatus
   job:
     assert:
       key: $queryStatus
-      val: "Created"
+      relation: eq
+      val: 0

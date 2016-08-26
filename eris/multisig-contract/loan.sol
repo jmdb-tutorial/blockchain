@@ -19,8 +19,7 @@ contract LoanContract {
   }
 
   SignatureTracking signatures;
-
-  
+ 
   function LoanContract(string _hashOfContract,
 		address[] _borrowers,
 		address _lender,
@@ -59,7 +58,7 @@ contract LoanContract {
   }
 
   modifier inState(State _state) {
-    if (_state != status()) throw;
+    if (_state != getStatus()) throw;
     _
   }
 
@@ -87,7 +86,7 @@ contract LoanContract {
   }
 
   // TODO: Work out what to do about cancelling
-  function status() returns (State status) {
+  function getStatus() returns (State status) {
     status = State.Created;
     if (signatures.borrowerCount == borrowers.length) {
       if (signatures.counterFraud) {
