@@ -3,7 +3,7 @@ jobs:
 - name: deployLoanK
   job:
     deploy:
-      contract: loan.sol
+      contract: loan.sol      
       wait: true
 
 - name: queryStatus
@@ -11,7 +11,18 @@ jobs:
     query-contract:
       destination: $deployLoanK
       data: getStatus
-    
+
+- name: queryExecutor
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getExecutor
+
+- name: queryHashOfContract
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getHashOfContract
 
 - name: assertStatus
   job:

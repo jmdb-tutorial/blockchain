@@ -1,0 +1,76 @@
+jobs:
+
+- name: deployBasicK
+  job:
+    deploy:
+      contract: basic.sol
+      data: 42
+      wait: true
+      
+- name: queryStateIntConstruction
+  job:
+    query-contract:
+      destination: $deployBasicK
+      data: getStateInt
+
+- name: queryStateStringConstruction
+  job:
+    query-contract:
+      destination: $deployBasicK
+      data: getStateString
+      
+- name: setStateInt
+  job:
+    call:
+      destination: $deployBasicK
+      data: setStateInt 666
+      wait: true
+
+- name: setStateString
+  job:
+    call:
+      destination: $deployBasicK
+      data: setStateString bar
+      wait: true
+
+- name: queryStateIntAfter
+  job:
+    query-contract:
+      destination: $deployBasicK
+      data: getStateInt
+
+- name: queryStateStringAfter
+  job:
+    query-contract:
+      destination: $deployBasicK
+      data: getStateString
+
+      
+- name: assertStateIntConstruction
+  job:
+    assert:
+      key: $queryStateIntConstruction
+      relation: eq
+      val: 42
+
+- name: assertStateIntAfter
+  job:
+    assert:
+      key: $queryStateIntAfter
+      relation: eq
+      val: 666
+
+
+- name: assertStateStringConstruction
+  job:
+    assert:
+      key: $queryStateStringConstruction
+      relation: eq
+      val: foo
+
+- name: assertStateStringAfter
+  job:
+    assert:
+      key: $queryStateStringAfter
+      relation: eq
+      val: bar
