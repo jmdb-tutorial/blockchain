@@ -15,8 +15,14 @@ contract BasicContract {
     creator = msg.sender;
   }
 
-  function initialise(uint _A, uint _B,
-	          string _C) {
+  modifier onlyCreator() {
+    if (msg.sender != creator) throw;
+    _
+  }
+
+  function initialise(uint _A, uint _B, string _C)
+    onlyCreator()
+  {
     A = _A;
     B = _B;
     C = _C;
