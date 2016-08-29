@@ -4,6 +4,7 @@ jobs:
   job:
     deploy:
       contract: basic.sol
+#      data: 42 3 foo
       wait: true
 
 - name: initialise

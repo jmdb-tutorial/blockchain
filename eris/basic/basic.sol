@@ -5,7 +5,10 @@ contract BasicContract {
   uint stateIntB;
   string stateString;
 
-  function BasicContract() {
+  function BasicContract(uint _stateIntA, uint _stateIntB, string _stateString) {
+    stateIntA = _stateIntA;
+    stateIntB = _stateIntB;
+    stateString = _stateString;
   }
 
   function initialise(uint _stateIntA, uint _stateIntB, string _stateString) {
