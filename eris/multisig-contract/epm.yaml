@@ -13,6 +13,20 @@ jobs:
       data: initialise d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81 C8561C44A527AFF4DB24AC7F977D1A590E7951A3 6EAD9DA629368A1847C40F451E8B5C1D31E0E569
       wait: true
 
+- name: addBorrowerA
+  job:
+    call:
+      destination: $deployLoanK
+      data: addBorrower 7959542D88FA0FE95A62B6701E0F276DC137D990
+      wait: true
+
+- name: addBorrowerB
+  job:
+    call:
+      destination: $deployLoanK
+      data: addBorrower 478D68A4159C76AECBC38B0D901C014FDB12B676
+      wait: true
+
 - name: queryStatus
   job:
     query-contract:
@@ -53,13 +67,69 @@ jobs:
   job:
     query-contract:
       destination: $deployLoanK
-      data: getBorrowerA
+      data: getBorrower 0
     
 - name: queryBorrowerB
   job:
     query-contract:
       destination: $deployLoanK
-      data: getBorrowerB
+      data: getBorrower 1
+      
+- name: querySignatureCount
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getSignatureCount
+
+- name: signBorrowerA
+  job:
+    call:
+      source: 7959542D88FA0FE95A62B6701E0F276DC137D990
+      destination: $deployLoanK
+      data: sign d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81
+      wait: true
+
+- name: signBorrowerB
+  job:
+    call:
+      source: 478D68A4159C76AECBC38B0D901C014FDB12B676
+      destination: $deployLoanK
+      data: sign d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81
+      wait: true
+
+- name: querySignatureCount
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getSignatureCount
+
+- name: queryStatus
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getStatus
+
+
+- name: approve
+  job:
+    call:
+      source: 6EAD9DA629368A1847C40F451E8B5C1D31E0E569
+      destination: $deployLoanK
+      data: approve d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81
+      wait: true
+
+- name: queryCounterFraudSigned
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getCounterFraudSigned
+
+      
+- name: queryStatus
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getStatus
       
 
       

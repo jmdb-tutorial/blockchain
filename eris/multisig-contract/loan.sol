@@ -2,28 +2,25 @@
 // TODO: implement a cancel method that could also have some rules
 contract LoanContract {
   enum State { Created, BorrowerSigned, ReadyToPay, Active, Cancelled }
-  
-  string hashOfContract;
-  
-  // The participants
-  
-  address executor; // The "controlling" entity for the contract
-  address[] borrowers;
-  address lender;
-  address counterFraud;
 
   struct SignatureTracking {
     uint borrowerCount;
     bool lender;
     bool counterFraud;
   }
+  
+  address executor; // The "controlling" entity for the contract  
+  address lender;
+  address counterFraud;
+  address[] borrowers;
+
+  string hashOfContract;
 
   SignatureTracking signatures;
 
-  function LoanContract(address _lender, address _counterFraud, address[] _borrowers) {
+  function LoanContract(address _lender, address _counterFraud) {
     lender = _lender;
     counterFraud = _counterFraud;
-    borrowers = _borrowers;
     executor = msg.sender;
   }
 
@@ -35,17 +32,6 @@ contract LoanContract {
     _
   }
 
-  function initialise (string _hashOfContract, address _lender, address _counterFraud)
-  {
-    hashOfContract = _hashOfContract;
-    lender = _lender;
-    counterFraud = _counterFraud;
-  }
-
-  function addBorrower(address addr) {
-    borrowers.push(addr);
-  }
-  
   modifier onlyBorrower() {
     uint borrowerMatch = 0;
     for (uint i = 0; i < borrowers.length; i++) {
@@ -73,6 +59,53 @@ contract LoanContract {
     _
   }
 
+  function initialise (string _hashOfContract, address _lender, address _counterFraud)
+    onlyExecutor()
+  {
+    hashOfContract = _hashOfContract;
+    lender = _lender;
+    counterFraud = _counterFraud;
+  }
+
+  function addBorrower(address addr)
+    onlyExecutor()
+  {
+    borrowers.push(addr);
+  }
+    
+
+  function getHashOfContract() constant returns (string) {
+    return hashOfContract;
+  }
+
+  function getExecutor() constant returns (address) {
+    return executor;
+  }    
+
+  function getLender() constant returns (address) {
+    return lender;
+  }
+
+  function getCounterFraud() constant returns (address) {
+    return counterFraud;
+  }
+
+  function getBorrowerCount() constant returns (uint) {
+    return borrowers.length;
+  }
+
+  function getBorrower(uint x) constant returns (address) {
+    return borrowers[x];
+  }
+
+  function getSignatureCount() constant returns (uint) {
+    return signatures.borrowerCount;
+  }
+
+  function getCounterFraudSigned() constant returns (bool) {
+    return signatures.counterFraud;
+  }
+
   // The hash gets passed in by each party so we can check it matches the one that we created.
   function sign(string _hashOfContract)
     onlyBorrower()
@@ -81,48 +114,40 @@ contract LoanContract {
     signatures.borrowerCount ++;
   }
 
-  function paid(string _hashOfContract)
+  function approve(string _hashOfContract)
+    onlyCounterFraud()
+    inState(State.BorrowerSigned)
+  {
+    signatures.counterFraud = true;
+    //  ReadyToPay(this);
+  }
+
+  
+   function paid(string _hashOfContract)
     onlyLender()
     inState(State.ReadyToPay)
   {
     signatures.lender = true;
   }
 
-  function approve(string _hashOfContract)
-    onlyCounterFraud()
-    inState(State.BorrowerSigned)
-  {
-    signatures.counterFraud = true;
-    ReadyToPay(this);
-  }
 
   // TODO: Work out what to do about cancelling
-  function getStatus() returns (State status) {
+  function getStatus() constant returns (State status) {
     status = State.Created;
+    
     if (signatures.borrowerCount == borrowers.length) {
+      status = State.BorrowerSigned;
+      
       if (signatures.counterFraud) {
+        status = State.ReadyToPay;
+        
         if (signatures.lender) {
           status = State.Active;
-        } else {
-          status = State.ReadyToPay;
-        }
+        } 
       }     
     }
     return status;
   }
+  
 
-  function getHashOfContract() returns (string hashOfContract) {
-    return hashOfContract;
-  }
-
-  function getExecutor() returns (address executor) {
-    return msg.sender;
-  }
-  
-  function () {
-    // gets executed if invalid data is sent
-    throw;
-  }
-  
-  
 }

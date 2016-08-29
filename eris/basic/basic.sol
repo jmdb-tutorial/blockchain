@@ -28,7 +28,9 @@ contract BasicContract {
     C = _C;
   }
 
-  function addUser(address addr) {
+  function addUser(address addr)
+    onlyCreator()
+  {
     users.push(addr);
   }
   
