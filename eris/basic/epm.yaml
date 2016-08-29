@@ -11,7 +11,7 @@ jobs:
   job:
     call:
       destination: $deployBasicK
-      data: initialise 42 3 foo C8561C44A527AFF4DB24AC7F977D1A590E7951A3
+      data: initialise 42 3 foo 
       wait: true
       
 - name: queryA_Construction
@@ -39,12 +39,40 @@ jobs:
       destination: $deployBasicK
       data: getCreator
 
-- name: queryUser_Construction
+- name: addUserA
+  job:
+    call:
+      destination: $deployBasicK
+      data: addUser C8561C44A527AFF4DB24AC7F977D1A590E7951A3
+      wait: true
+
+- name: addUserB
+  job:
+    call:
+      destination: $deployBasicK
+      data: addUser 7959542D88FA0FE95A62B6701E0F276DC137D990
+      wait: true
+
+      
+- name: queryUserCount
   job:
     query-contract:
       destination: $deployBasicK
-      data: getUser
+      data: getUserCount
 
+- name: queryFirstUser
+  job:
+    query-contract:
+      destination: $deployBasicK
+      data: getUser 0
+
+- name: querySecondUser
+  job:
+    query-contract:
+      destination: $deployBasicK
+      data: getUser 1
+
+      
 - name: setA
   job:
     call:

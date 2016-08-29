@@ -5,7 +5,7 @@ contract BasicContract {
   uint B;
   string C;
   address creator;
-  address user;
+  address[] users;
 
   function BasicContract(uint _A, uint _B,
 		 string _C) {
@@ -16,11 +16,14 @@ contract BasicContract {
   }
 
   function initialise(uint _A, uint _B,
-	          string _C, address _user) {
+	          string _C) {
     A = _A;
     B = _B;
     C = _C;
-    user = _user;
+  }
+
+  function addUser(address addr) {
+    users.push(addr);
   }
   
   function setA(uint x) {
@@ -51,8 +54,12 @@ contract BasicContract {
     return creator;
   }
 
-  function getUser() constant returns (address) {
-    return user;
+  function getUserCount() constant returns (uint) {
+    return users.length;
+  }
+
+  function getUser(uint x) constant returns (address) {
+    return users[x];
   }
 
   
