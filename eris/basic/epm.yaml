@@ -4,26 +4,46 @@ jobs:
   job:
     deploy:
       contract: basic.sol
-      data: 42
+      wait: true
+
+- name: initialise
+  job:
+    call:
+      destination: $deployBasicK
+      data: initialise 42 3 foo
       wait: true
       
-- name: queryStateIntConstruction
+- name: queryStateIntA_Construction
   job:
     query-contract:
       destination: $deployBasicK
-      data: getStateInt
+      data: getStateIntA
 
-- name: queryStateStringConstruction
+- name: queryStateIntB_Construction
+  job:
+    query-contract:
+      destination: $deployBasicK
+      data: getStateIntB
+
+      
+- name: queryStateString_Construction
   job:
     query-contract:
       destination: $deployBasicK
       data: getStateString
       
-- name: setStateInt
+- name: setStateIntA
   job:
     call:
       destination: $deployBasicK
-      data: setStateInt 666
+      data: setStateIntA 666
+      wait: true
+
+- name: setStateIntB
+  job:
+    call:
+      destination: $deployBasicK
+      data: setStateIntB 999
       wait: true
 
 - name: setStateString
@@ -33,44 +53,63 @@ jobs:
       data: setStateString bar
       wait: true
 
-- name: queryStateIntAfter
+- name: queryStateIntA_Set
   job:
     query-contract:
       destination: $deployBasicK
-      data: getStateInt
+      data: getStateIntA
 
-- name: queryStateStringAfter
+- name: queryStateIntB_Set
+  job:
+    query-contract:
+      destination: $deployBasicK
+      data: getStateIntB
+
+- name: queryStateString_Set
   job:
     query-contract:
       destination: $deployBasicK
       data: getStateString
 
       
-- name: assertStateIntConstruction
+- name: assertStateIntA_Construction
   job:
     assert:
-      key: $queryStateIntConstruction
+      key: $queryStateIntA_Construction
       relation: eq
       val: 42
 
-- name: assertStateIntAfter
+- name: assertStateIntB_Construction
   job:
     assert:
-      key: $queryStateIntAfter
+      key: $queryStateIntB_Construction
+      relation: eq
+      val: 3
+
+- name: assertStateString_Construction
+  job:
+    assert:
+      key: $queryStateString_Construction
+      relation: eq
+      val: foo
+      
+- name: assertStateIntA_Set
+  job:
+    assert:
+      key: $queryStateIntA_Set
       relation: eq
       val: 666
 
-
-- name: assertStateStringConstruction
+- name: assertStateIntB_Set
   job:
     assert:
-      key: $queryStateStringConstruction
+      key: $queryStateIntB_Set
       relation: eq
-      val: foo
+      val: 999
 
 - name: assertStateStringAfter
   job:
     assert:
-      key: $queryStateStringAfter
+      key: $queryStateString_Set
       relation: eq
       val: bar
