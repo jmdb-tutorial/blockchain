@@ -114,12 +114,12 @@ contract LoanContract {
     signatures.borrowerCount ++;
   }
 
-  function approve(string _hashOfContract)
+  function approved(string _hashOfContract)
     onlyCounterFraud()
     inState(State.BorrowerSigned)
   {
     signatures.counterFraud = true;
-    //  ReadyToPay(this);
+    ReadyToPay(this);
   }
 
   

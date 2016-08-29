@@ -27,7 +27,7 @@ jobs:
       data: addBorrower 478D68A4159C76AECBC38B0D901C014FDB12B676
       wait: true
 
-- name: queryStatus
+- name: queryStatus_1
   job:
     query-contract:
       destination: $deployLoanK
@@ -103,7 +103,7 @@ jobs:
       destination: $deployLoanK
       data: getSignatureCount
 
-- name: queryStatus
+- name: queryStatus_2
   job:
     query-contract:
       destination: $deployLoanK
@@ -115,7 +115,7 @@ jobs:
     call:
       source: 6EAD9DA629368A1847C40F451E8B5C1D31E0E569
       destination: $deployLoanK
-      data: approve d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81
+      data: approved d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81
       wait: true
 
 - name: queryCounterFraudSigned
@@ -125,17 +125,30 @@ jobs:
       data: getCounterFraudSigned
 
       
-- name: queryStatus
+- name: queryStatus_3
   job:
     query-contract:
       destination: $deployLoanK
       data: getStatus
-      
+
+- name: pay
+  job:
+    call:
+      source: C8561C44A527AFF4DB24AC7F977D1A590E7951A3
+      destination: $deployLoanK
+      data: paid d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81
+      wait: true
+
+- name: queryStatus_4
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getStatus
 
       
 - name: assertStatus
   job:
     assert:
-      key: $queryStatus
+      key: $queryStatus_4
       relation: eq
-      val: 0
+      val: 3
