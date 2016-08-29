@@ -117,13 +117,6 @@ jobs:
       destination: $deployLoanK
       data: approved d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81
       wait: true
-
-- name: queryCounterFraudSigned
-  job:
-    query-contract:
-      destination: $deployLoanK
-      data: getCounterFraudSigned
-
       
 - name: queryStatus_3
   job:
