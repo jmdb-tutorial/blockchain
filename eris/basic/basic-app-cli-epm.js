@@ -11,7 +11,8 @@ var erisdbURL = "http://192.168.99.100:1337/rpc";
 // Load the abi (definition file) which will have been created by the compiler
 var contractData = require('./epm.json');
 var contractAddress = contractData["deployBasicK"];
-var contractAbi = JSON.parse(fs.readFileSync("./abi/" + contractAddress));
+//var contractAbi = JSON.parse(fs.readFileSync("./abi/" + contractAddress));
+var contractAbi = JSON.parse(fs.readFileSync("./abi/BasicContract"));
 
 if (debug) {
     console.log(JSON.stringify(contractAbi, undefined, 2));

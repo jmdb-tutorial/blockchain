@@ -61,4 +61,4 @@ function getStateIntA() {
 
 
 // run
-createContract(initialise);
+createContract(function() {console.log("finished"); });

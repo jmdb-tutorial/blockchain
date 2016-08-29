@@ -1,44 +1,58 @@
 /// @title A multisignatory loan contract
 // TODO: implement a cancel method that could also have some rules
 contract BasicContract {
-  uint stateIntA;
-  uint stateIntB;
-  string stateString;
+  uint A;
+  uint B;
+  string C;
+  address creator;
+  address user;
 
-  function BasicContract(uint _stateIntA, uint _stateIntB, string _stateString) {
-    stateIntA = _stateIntA;
-    stateIntB = _stateIntB;
-    stateString = _stateString;
-  }
-
-  function initialise(uint _stateIntA, uint _stateIntB, string _stateString) {
-    stateIntA = _stateIntA;
-    stateIntB = _stateIntB;
-    stateString = _stateString;
-  }
-  
-  function setStateIntA(uint x) {
-    stateIntA = x;
+  function BasicContract(uint _A, uint _B,
+		 string _C) {
+    A = _A;
+    B = _B;
+    C = _C;
+    creator = msg.sender;
   }
 
-  function setStateIntB(uint x) {
-    stateIntB = x;
+  function initialise(uint _A, uint _B,
+	          string _C, address _user) {
+    A = _A;
+    B = _B;
+    C = _C;
+    user = _user;
   }
   
-  function setStateString(string s) {
-    stateString = s;
+  function setA(uint x) {
+    A = x;
   }
 
-  function getStateIntA() constant returns (uint) {
-    return stateIntA;
+  function setB(uint x) {
+    B = x;
   }
   
-  function getStateIntB() constant returns (uint) {
-    return stateIntB;
+  function setC(string s) {
+    C = s;
+  }
+
+  function getA() constant returns (uint) {
+    return A;
   }
   
-  function getStateString() constant returns (string) {
-    return stateString;
+  function getB() constant returns (uint) {
+    return B;
+  }
+  
+  function getC() constant returns (string) {
+    return C;
+  }
+
+  function getCreator() constant returns (address) {
+    return creator;
+  }
+
+  function getUser() constant returns (address) {
+    return user;
   }
 
   
