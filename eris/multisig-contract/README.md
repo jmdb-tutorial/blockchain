@@ -115,10 +115,10 @@ There will be 5 accounts, called :
 We will map these to the accounts above like this:
 
 | multisig_full_000 | EXECUTOR      |
-| multisig_participant_001 | LENDER        |
-| multisig_participant_002 | BORROWER_A    |
-| multisig_participant_003 | BORROWER_B    |
-| multisig_participant_004 | COUNTER_FRAUD |
+| multisig_participant_000 | LENDER        |
+| multisig_participant_001 | BORROWER_A    |
+| multisig_participant_002 | BORROWER_B    |
+| multisig_participant_003 | COUNTER_FRAUD |
 
 Next up we need to instantiate our chain. If you have your simplechain running, stop it first. If you want to clean everything up do
 	eris chains rm multisig --data --dir --file --force 

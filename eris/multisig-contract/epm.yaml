@@ -6,6 +6,13 @@ jobs:
       contract: loan.sol      
       wait: true
 
+- name: initialise
+  job:
+    call:
+      destination: $deployLoanK
+      data: initialise d5d549e5431325b347d7c371b28ef9358d2436d4f5e6732485b2820ef0ed8e81 C8561C44A527AFF4DB24AC7F977D1A590E7951A3 6EAD9DA629368A1847C40F451E8B5C1D31E0E569
+      wait: true
+
 - name: queryStatus
   job:
     query-contract:
@@ -24,6 +31,38 @@ jobs:
       destination: $deployLoanK
       data: getHashOfContract
 
+- name: queryLender
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getLender
+
+- name: queryCounterFraud
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getCounterFraud
+
+- name: queryBorrowerCount
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getBorrowerCount
+
+- name: queryBorrowerA
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getBorrowerA
+    
+- name: queryBorrowerB
+  job:
+    query-contract:
+      destination: $deployLoanK
+      data: getBorrowerB
+      
+
+      
 - name: assertStatus
   job:
     assert:

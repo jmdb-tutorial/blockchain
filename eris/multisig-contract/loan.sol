@@ -3,7 +3,7 @@
 contract LoanContract {
   enum State { Created, BorrowerSigned, ReadyToPay, Active, Cancelled }
   
-  string hashOfContract = "foo"; // The SHA256 hash of the terms of the contract
+  string hashOfContract;
   
   // The participants
   
@@ -20,22 +20,31 @@ contract LoanContract {
 
   SignatureTracking signatures;
 
-  /* 
-     address[] _borrowers,
-     address _lender,
-     address _counterFraud */
-  function LoanContract(string _hashOfContract) {
+  function LoanContract(address _lender, address _counterFraud, address[] _borrowers) {
+    lender = _lender;
+    counterFraud = _counterFraud;
+    borrowers = _borrowers;
     executor = msg.sender;
-    
-    hashOfContract = _hashOfContract;
-    //borrowers = _borrowers;
-    //lender = _lender;
-    //counterFraud = _counterFraud;
   }
 
   // Our loan system would listen for this so that it could make the loan payment
   event ReadyToPay(address loanContract);
 
+  modifier onlyExecutor() {
+    if (msg.sender != executor) throw;
+    _
+  }
+
+  function initialise (string _hashOfContract, address _lender, address _counterFraud)
+  {
+    hashOfContract = _hashOfContract;
+    lender = _lender;
+    counterFraud = _counterFraud;
+  }
+
+  function addBorrower(address addr) {
+    borrowers.push(addr);
+  }
   
   modifier onlyBorrower() {
     uint borrowerMatch = 0;
