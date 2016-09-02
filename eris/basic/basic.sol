@@ -1,5 +1,4 @@
 /// @title A multisignatory loan contract
-// TODO: implement a cancel method that could also have some rules
 contract BasicContract {
   uint A;
   uint B;

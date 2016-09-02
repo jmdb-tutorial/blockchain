@@ -5,7 +5,7 @@ import hashlib, time
 message = "Hello Agile On the Beach!"
 messageHash = hashlib.sha256(message).hexdigest()
 
-difficulty = 1 # Big difference between 4 and 5
+difficulty = 5 # Big difference between 4 and 5
 
 print "Going to try and find a block hash for message hash: " + messageHash
 print "Difficulty:  " + str(difficulty)
